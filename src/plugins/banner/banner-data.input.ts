@@ -2,13 +2,13 @@ import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
 export class BannerDataInput {
-    @Field()
+    @Field({ nullable: true })
     position: number;
 
-    @Field()
+    @Field({ nullable: true })
     imageUrlEn: string;
 
-    @Field()
+    @Field({ nullable: true })
     imageUrlAr: string;
 
     @Field({ nullable: true })

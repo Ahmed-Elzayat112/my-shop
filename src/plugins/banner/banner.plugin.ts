@@ -3,10 +3,11 @@ import { PluginCommonModule, Type, VendurePlugin } from '@vendure/core';
 import { BANNER_PLUGIN_OPTIONS } from './constants';
 import { PluginInitOptions } from './types';
 import { BannerService } from './banner.service';
-import { Banner } from './banner.entity';
+import { Banner } from './entities/banner.entity';
 import { BannerResolver } from './banner.resolver';
-import { adminApiExtensions } from './admin-api-extensions';
+import { adminApiExtensions } from './extensions/admin-api-extensions';
 import { createBanner, updateBanner } from './banner.permission';
+import { shopApiExtensions } from './extensions/shop-api-extensions';
 
 @VendurePlugin({
     imports: [PluginCommonModule],
@@ -17,7 +18,7 @@ import { createBanner, updateBanner } from './banner.permission';
         resolvers: [BannerResolver],
     },
     shopApiExtensions: {
-        schema: adminApiExtensions,
+        schema: shopApiExtensions,
         resolvers: [BannerResolver],
     },
     configuration: config => {

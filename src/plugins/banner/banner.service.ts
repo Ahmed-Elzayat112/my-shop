@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionalConnection } from '@vendure/core';
-import { Banner } from './banner.entity';
+import { Banner } from './entities/banner.entity';
 import { BannerDataInput } from './banner-data.input';
 
 @Injectable()
@@ -12,6 +12,9 @@ export class BannerService {
         const positions = banners.map(banner => banner.position);
         if (positions.includes(bannerData.position)) {
             throw new Error('Position already taken');
+        }
+        if(bannerData.position>12){
+            throw new Error('Maximum number of banners reached');
         }
         const banner = new Banner();
         Object.assign(banner, bannerData);

@@ -1,15 +1,16 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { BannerService } from './banner.service';
-import { Banner } from './banner.entity';
+import { Banner } from './entities/banner.entity';
 import { BannerDataInput } from './banner-data.input';
-import { Allow, Ctx, RequestContext } from '@vendure/core';
+import { Allow, Ctx, Permission, RequestContext } from '@vendure/core';
 import { createBanner, updateBanner } from './banner.permission';
 
-@Resolver(() => Banner)
+@Resolver()
 export class BannerResolver {
     constructor(private bannerService: BannerService) {}
 
     @Query()
+    @Allow(Permission.ReadCatalog)
     async banners(@Ctx() context:RequestContext): Promise<Banner[]> {
         console.log('-------------->',context.languageCode);
         
