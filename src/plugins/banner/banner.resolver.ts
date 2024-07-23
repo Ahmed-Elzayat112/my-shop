@@ -14,11 +14,12 @@ export class BannerResolver {
     async banners(@Ctx() context:RequestContext): Promise<Banner[]> {
         console.log('-------------->',context.languageCode);
         
+        // TODO: Handle language-specific image URLs based on the provided `languageCode` using translate service or default to English.
         const language = context.languageCode || 'en';
         const banners = await this.bannerService.getBanners();
         return banners.map(banner => ({
             ...banner,
-            imageUrl: language === 'ar' ? banner.imageUrlAr : banner.imageUrlEn,
+            imageUrl: language === 'ar' ? banner.imageUrl : banner.imageUrlEn,
             url: language === 'ar' ? banner.urlAr : banner.urlEn,
         }));
     }
