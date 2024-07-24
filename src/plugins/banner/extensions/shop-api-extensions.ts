@@ -4,6 +4,9 @@ export const shopApiExtensions = gql`
   type Banner {
     id: ID!
     position: Int!
+    imageUrl: String!
+    url: String
+    name: String!
     translations: [BannerTranslation!]!
   }
 
@@ -30,10 +33,5 @@ export const shopApiExtensions = gql`
   extend type Query {
     banners: [Banner!]!
     banner(bannerId: ID!): Banner
-  }
-
-  extend type Mutation {
-    createBanner(bannerData: BannerDataInput!): Banner!
-    updateBanner(bannerId: ID!, bannerData: BannerDataInput!): Banner!
   }
 `;

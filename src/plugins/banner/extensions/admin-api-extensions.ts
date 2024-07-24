@@ -4,6 +4,9 @@ export const adminApiExtensions = gql`
   type Banner {
     id: ID!
     position: Int!
+    imageUrl: String!
+    url: String
+    name: String!
     translations: [BannerTranslation!]!
   }
 

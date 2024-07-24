@@ -4,7 +4,8 @@ import { BANNER_PLUGIN_OPTIONS } from "./constants";
 import { PluginInitOptions } from "./types";
 import { BannerService } from "./banner.service";
 import { Banner } from "./entities/banner.entity";
-import { BannerResolver } from "./banner.resolver";
+import { AdminBannerResolver } from "./resolvers/admin-banner.resolver";
+import { ShopBannerResolver } from "./resolvers/shop-banner.resolver";
 import { adminApiExtensions } from "./extensions/admin-api-extensions";
 import { createBanner, updateBanner } from "./banner.permission";
 import { shopApiExtensions } from "./extensions/shop-api-extensions";
@@ -19,11 +20,11 @@ import { BannerTranslation } from "./entities/banner-translation.entity";
   ],
   adminApiExtensions: {
     schema: adminApiExtensions,
-    resolvers: [BannerResolver],
+    resolvers: [AdminBannerResolver],
   },
   shopApiExtensions: {
     schema: shopApiExtensions,
-    resolvers: [BannerResolver],
+    resolvers: [ShopBannerResolver],
   },
   configuration: (config) => {
     config.authOptions.customPermissions.push(createBanner);

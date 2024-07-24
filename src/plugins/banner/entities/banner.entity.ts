@@ -4,7 +4,6 @@ import {
   Translatable,
   Translation,
   LocaleString,
-  Facet,
 } from "@vendure/core";
 import { BannerTranslation } from "./banner-translation.entity";
 
@@ -15,6 +14,8 @@ export class Banner extends VendureEntity implements Translatable {
   }
 
   name: LocaleString;
+  imageUrl: LocaleString;
+  url?: LocaleString;
 
   @Column()
   position: number;
