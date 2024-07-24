@@ -4,28 +4,30 @@ export const adminApiExtensions = gql`
   type Banner {
     id: ID!
     position: Int!
-    imageUrl: String!
     url: String
+    asset: Asset
     name: String!
+    page: Int!
     translations: [BannerTranslation!]!
   }
 
   type BannerTranslation {
     id: ID!
     languageCode: LanguageCode!
-    imageUrl: String!
+    assetId: Int!
     url: String
     name: String!
   }
 
   input BannerDataInput {
     position: Int!
+    page: Int!
     translations: [BannerTranslationInput!]!
   }
 
   input BannerTranslationInput {
     languageCode: LanguageCode!
-    imageUrl: String!
+    assetId: Int!
     url: String
     name: String!
   }

@@ -7,7 +7,7 @@ export class BannerTranslationInput {
   languageCode: LanguageCode;
 
   @Field()
-  imageUrl: string;
+  assetId: number;
 
   @Field({ nullable: true })
   url?: string;

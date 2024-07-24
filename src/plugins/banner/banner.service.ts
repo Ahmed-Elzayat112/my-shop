@@ -1,6 +1,5 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import {
-  LanguageCode,
   RequestContext,
   TransactionalConnection,
   TranslatableSaver,
@@ -29,10 +28,14 @@ export class BannerService {
     }
 
     const banners = await this.connection.getRepository(ctx, Banner).find({
-      where: { position: bannerData.position },
+      where: { page: bannerData.page },
     });
-    if (banners.length > 0) {
-      throw new Error("Position already taken");
+    const existingBanner = banners.find(
+      (b) => b.position == bannerData.position
+    );
+
+    if (existingBanner) {
+      throw new HttpException("Position already taken", HttpStatus.AMBIGUOUS);
     }
   }
 
@@ -41,7 +44,7 @@ export class BannerService {
     bannerData: BannerDataInput
   ): Promise<Banner> {
     // validation
-    this.validateInput(ctx, bannerData);
+    await this.validateInput(ctx, bannerData);
 
     const banner = new Banner();
     banner.position = bannerData.position;
@@ -53,7 +56,12 @@ export class BannerService {
       translationType: BannerTranslation,
       beforeSave: async (f) => {},
     });
-    return savedBanner;
+
+    // look at vendur way to save asset
+    return this.translatorService.translate(
+      await this.getBanner(ctx, +savedBanner.id!),
+      ctx
+    );
   }
 
   async updateBanner(
@@ -81,7 +89,10 @@ export class BannerService {
       translationType: BannerTranslation,
       beforeSave: async (f) => {},
     });
-    return savedBanner;
+    return this.translatorService.translate(
+      await this.getBanner(ctx, +savedBanner.id!),
+      ctx
+    );
   }
 
   async getBanner(ctx: RequestContext, bannerId: number): Promise<Banner> {
@@ -105,7 +116,6 @@ export class BannerService {
       throw new Error("No banners found");
     }
 
-    console.log(banners[0].imageUrl);
     return Promise.all(
       banners.map((banner) => this.translatorService.translate(banner, ctx))
     );

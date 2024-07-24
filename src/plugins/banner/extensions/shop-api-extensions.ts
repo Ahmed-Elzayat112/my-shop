@@ -4,16 +4,16 @@ export const shopApiExtensions = gql`
   type Banner {
     id: ID!
     position: Int!
-    imageUrl: String!
     url: String
     name: String!
+    page: Int!
     translations: [BannerTranslation!]!
   }
 
   type BannerTranslation {
     id: ID!
     languageCode: LanguageCode!
-    imageUrl: String!
+    assetId: Int!
     url: String
     name: String!
   }
@@ -25,7 +25,7 @@ export const shopApiExtensions = gql`
 
   input BannerTranslationInput {
     languageCode: LanguageCode!
-    imageUrl: String!
+    assetId: Int!
     url: String
     name: String!
   }

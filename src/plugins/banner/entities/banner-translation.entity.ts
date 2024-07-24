@@ -1,6 +1,19 @@
-import { Entity, Column, ManyToOne, DeepPartial } from "typeorm";
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  DeepPartial,
+  Index,
+  JoinColumn,
+} from "typeorm";
 import { Banner } from "./banner.entity";
-import { LanguageCode, Translation, VendureEntity } from "@vendure/core";
+import {
+  Asset,
+  ID,
+  LanguageCode,
+  Translation,
+  VendureEntity,
+} from "@vendure/core";
 
 @Entity()
 export class BannerTranslation
@@ -21,8 +34,13 @@ export class BannerTranslation
   @Column("varchar")
   languageCode: LanguageCode;
 
-  @Column()
-  imageUrl: string;
+  @Column({ nullable: true })
+  assetId: ID;
+
+  @Index()
+  @ManyToOne((type) => Asset, { eager: true, onDelete: "CASCADE" })
+  @JoinColumn({ name: "assetId" })
+  asset: Asset;
 
   @Column({ nullable: true })
   url?: string;

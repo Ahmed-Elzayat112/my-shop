@@ -6,6 +6,12 @@ export class BannerDataInput {
   @Field({ nullable: true })
   position: number;
 
+  @Field({ nullable: true })
+  page: number;
+
+  @Field({ nullable: true })
+  assetId: number;
+
   @Field(() => [BannerTranslationInput])
   translations: BannerTranslationInput[];
 }

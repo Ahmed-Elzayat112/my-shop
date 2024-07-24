@@ -9,6 +9,12 @@ export class UpdateBannerInput {
   @Field()
   position: number;
 
+  @Field()
+  page: number;
+
+  @Field({ nullable: true })
+  assetId: number;
+
   @Field(() => [BannerTranslationInput])
   translations: BannerTranslationInput[];
 }
