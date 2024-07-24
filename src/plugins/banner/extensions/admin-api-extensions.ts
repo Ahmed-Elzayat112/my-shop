@@ -12,6 +12,7 @@ export const adminApiExtensions = gql`
     languageCode: LanguageCode!
     imageUrl: String!
     url: String
+    name: String!
   }
 
   input BannerDataInput {
@@ -23,6 +24,7 @@ export const adminApiExtensions = gql`
     languageCode: LanguageCode!
     imageUrl: String!
     url: String
+    name: String!
   }
 
   extend type Query {

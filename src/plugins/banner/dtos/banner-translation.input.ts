@@ -11,4 +11,7 @@ export class BannerTranslationInput {
 
   @Field({ nullable: true })
   url?: string;
+
+  @Field()
+  name: string;
 }

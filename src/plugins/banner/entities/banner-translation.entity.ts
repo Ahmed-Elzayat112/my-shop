@@ -8,7 +8,7 @@ export class BannerTranslation
   implements Translation<Banner>
 {
   constructor(input?: DeepPartial<BannerTranslation>) {
-    super();
+    super(input);
   }
 
   @Column() name: string;
