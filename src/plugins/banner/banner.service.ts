@@ -1,37 +1,70 @@
-import { Injectable } from '@nestjs/common';
-import { TransactionalConnection } from '@vendure/core';
-import { Banner } from './entities/banner.entity';
-import { BannerDataInput } from './banner-data.input';
+import { Injectable } from "@nestjs/common";
+import {
+  LanguageCode,
+  RequestContext,
+  TransactionalConnection,
+  TranslatorService,
+} from "@vendure/core";
+import { Banner } from "./entities/banner.entity";
+import { BannerDataInput } from "./dtos/banner-data.input";
+import { BannerTranslation } from "./entities/banner-translation.entity";
 
 @Injectable()
 export class BannerService {
-    constructor(private connection: TransactionalConnection) {}
+  constructor(
+    private connection: TransactionalConnection,
+    private translatorService: TranslatorService
+  ) {}
 
-    async createBanner(bannerData: BannerDataInput): Promise<Banner> {
-        const banners = await this.connection.rawConnection.getRepository(Banner).find();
-        const positions = banners.map(banner => banner.position);
-        if (positions.includes(bannerData.position)) {
-            throw new Error('Position already taken');
-        }
-        if(bannerData.position>12){
-            throw new Error('Maximum number of banners reached');
-        }
-        const banner = new Banner();
-        Object.assign(banner, bannerData);
-        const savedBanner = await this.connection.rawConnection.getRepository(Banner).save(banner);
-        return savedBanner;
+  async createBanner(bannerData: BannerDataInput): Promise<Banner> {
+    const banners = await this.connection.rawConnection
+      .getRepository(Banner)
+      .find();
+    const positions = banners.map((banner) => banner.position);
+    if (positions.includes(bannerData.position)) {
+      throw new Error("Position already taken");
     }
+    if (bannerData.position > 12) {
+      throw new Error("Maximum number of banners reached");
+    }
+    const banner = new Banner();
+    Object.assign(banner, bannerData);
+    const savedBanner = await this.connection.rawConnection
+      .getRepository(Banner)
+      .save(banner);
+    return savedBanner;
+  }
 
-    async updateBanner(bannerId: number, bannerData: BannerDataInput): Promise<Banner> {
-        const banner = await this.connection.rawConnection.getRepository(Banner).findOne({where:{id: bannerId}});
-        if (!banner) {
-            throw new Error('Banner not found');
-        }
-        Object.assign(banner, bannerData);
-        return this.connection.rawConnection.getRepository(Banner).save(banner);
+  async updateBanner(
+    bannerId: number,
+    bannerData: BannerDataInput
+  ): Promise<Banner> {
+    const banner = await this.connection.rawConnection
+      .getRepository(Banner)
+      .findOne({ where: { id: bannerId } });
+    if (!banner) {
+      throw new Error("Banner not found");
     }
+    Object.assign(banner, bannerData);
+    return this.connection.rawConnection.getRepository(Banner).save(banner);
+  }
 
-    async getBanners(): Promise<Banner[]> {
-        return this.connection.rawConnection.getRepository(Banner).find();
+  async getBanner(ctx: RequestContext, bannerId: number): Promise<Banner> {
+    const banner = await this.connection.rawConnection
+      .getRepository(Banner)
+      .findOne({ where: { id: bannerId } });
+    if (!banner) {
+      throw new Error("Banner not found");
     }
+    return this.translatorService.translate(banner, ctx);
+  }
+
+  async getBanners(ctx: RequestContext): Promise<Banner[]> {
+    const banners = await this.connection.rawConnection
+      .getRepository(Banner)
+      .find();
+    return Promise.all(
+      banners.map((banner) => this.translatorService.translate(banner, ctx))
+    );
+  }
 }
