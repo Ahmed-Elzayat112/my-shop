@@ -2,9 +2,17 @@ import { Resolver, Query, Mutation, Args } from "@nestjs/graphql";
 import { BannerService } from "../banner.service";
 import { Banner } from "../entities/banner.entity";
 import { BannerDataInput } from "../dtos/banner-data.input";
-import { Allow, Ctx, Permission, RequestContext } from "@vendure/core";
+import {
+  Allow,
+  Ctx,
+  ListQueryOptions,
+  PaginatedList,
+  Permission,
+  RequestContext,
+} from "@vendure/core";
 import { createBanner, updateBanner } from "../banner.permission";
 import { UpdateBannerInput } from "../dtos/update-banner.input";
+import { BannerListOptions } from "../dtos/banner-options.input";
 
 @Resolver()
 export class AdminBannerResolver {
@@ -12,8 +20,11 @@ export class AdminBannerResolver {
 
   @Query()
   @Allow(Permission.ReadCatalog)
-  async banners(@Ctx() ctx: RequestContext): Promise<Banner[]> {
-    console.log("-------------->", ctx.languageCode);
+  async banners(
+    @Ctx() ctx: RequestContext,
+    @Args("options", { type: () => BannerListOptions, nullable: true })
+    options?: ListQueryOptions<Banner>
+  ): Promise<PaginatedList<Banner>> {
     const banners = await this.bannerService.getBanners(ctx);
     return banners;
   }

@@ -33,8 +33,42 @@ export const adminApiExtensions = gql`
   }
 
   extend type Query {
-    banners: [Banner!]!
+    banners(options: BannerListOptions): PaginatedBannerList!
     banner(bannerId: ID!): Banner
+  }
+
+  input BannerListOptions {
+    skip: Int
+    take: Int
+    sort: BannerSortParameter
+    filter: BannerFilterParameter
+    filterOperator: LogicalOperator
+  }
+
+  input BannerSortParameter {
+    position: SortOrder
+    page: SortOrder
+  }
+
+  input BannerPositionFilterParameter {
+    eq: Int
+    notEq: Int
+    lt: Int
+    lte: Int
+    gt: Int
+    gte: Int
+    in: [Int]
+    notIn: [Int]
+  }
+
+  input BannerFilterParameter {
+    position: BannerPositionFilterParameter
+    page: BannerPositionFilterParameter
+  }
+
+  type PaginatedBannerList {
+    items: [Banner!]!
+    totalItems: Int!
   }
 
   extend type Mutation {

@@ -3,6 +3,9 @@ import {
   AssetService,
   ChannelService,
   EntityWithAssets,
+  ListQueryBuilder,
+  ListQueryOptions,
+  PaginatedList,
   RequestContext,
   TransactionalConnection,
   TranslatableSaver,
@@ -12,6 +15,7 @@ import { Banner } from "./entities/banner.entity";
 import { BannerDataInput } from "./dtos/banner-data.input";
 import { BannerTranslation } from "./entities/banner-translation.entity";
 import { UpdateBannerInput } from "./dtos/update-banner.input";
+import { BannerListOptions } from "./dtos/banner-options.input";
 
 @Injectable()
 export class BannerService {
@@ -20,7 +24,7 @@ export class BannerService {
     private translatorService: TranslatorService,
     private translatableSaver: TranslatableSaver,
     private channelService: ChannelService,
-    private assetService: AssetService
+    private listQueryBuilder: ListQueryBuilder
   ) {}
 
   private async validateInput(
@@ -77,8 +81,8 @@ export class BannerService {
 
     // look at vendur way to save asset
     return this.translatorService.translate(
-      // await this.getBanner(ctx, +savedBanner.id!),
-      savedBanner,
+      await this.getBanner(ctx, +savedBanner.id!),
+      // savedBanner,
       ctx
     );
   }
@@ -126,17 +130,21 @@ export class BannerService {
     return this.translatorService.translate(banner, ctx);
   }
 
-  async getBanners(ctx: RequestContext): Promise<Banner[]> {
-    const banners = await this.connection.rawConnection
-      .getRepository(Banner)
-      .find();
-
-    if (!banners) {
-      throw new Error("No banners found");
-    }
-
-    return Promise.all(
-      banners.map((banner) => this.translatorService.translate(banner, ctx))
-    );
+  async getBanners(
+    ctx: RequestContext,
+    options?: ListQueryOptions<Banner>
+  ): Promise<PaginatedList<Banner>> {
+    return await this.listQueryBuilder
+      .build(Banner, options, { ctx })
+      .getManyAndCount()
+      .then(async ([banners, totalItems]) => {
+        const items = banners.map((banner) =>
+          this.translatorService.translate(banner, ctx)
+        );
+        return {
+          items,
+          totalItems,
+        };
+      });
   }
 }
