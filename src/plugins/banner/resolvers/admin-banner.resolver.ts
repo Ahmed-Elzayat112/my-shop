@@ -50,10 +50,9 @@ export class AdminBannerResolver {
   @Mutation()
   @Allow(updateBanner.Permission)
   async updateBanner(
-    @Args("bannerId") bannerId: number,
-    @Args("bannerData") bannerData: UpdateBannerInput,
+    @Args("updateBannerData") updateBannerData: UpdateBannerInput,
     @Ctx() ctx: RequestContext
   ): Promise<Banner> {
-    return this.bannerService.updateBanner(ctx, bannerId, bannerData);
+    return this.bannerService.updateBanner(ctx, updateBannerData);
   }
 }

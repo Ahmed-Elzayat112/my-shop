@@ -13,7 +13,7 @@ export class UpdateBannerInput {
   page: number;
 
   @Field({ nullable: true })
-  assetId: number;
+  url?: string;
 
   @Field(() => [BannerTranslationInput])
   translations: BannerTranslationInput[];

@@ -4,10 +4,10 @@ export const shopApiExtensions = gql`
   type Banner {
     id: ID!
     position: Int!
-    url: String
-    asset: Asset
-    name: String!
     page: Int!
+    url: String
+    title: String
+    image: Asset!
     translations: [BannerTranslation!]!
   }
 
@@ -15,26 +15,22 @@ export const shopApiExtensions = gql`
     id: ID!
     languageCode: LanguageCode!
     assetId: Int!
-    url: String
-    name: String!
+    title: String!
+    base: Banner!
+    image: Asset!
   }
 
   input BannerDataInput {
     position: Int!
     page: Int!
+    url: String
     translations: [BannerTranslationInput!]!
   }
 
   input BannerTranslationInput {
     languageCode: LanguageCode!
     assetId: Int!
-    url: String
-    name: String!
-  }
-
-  extend type Query {
-    banners(options: BannerListOptions): PaginatedBannerList!
-    banner(bannerId: ID!): Banner
+    title: String!
   }
 
   input BannerListOptions {
@@ -69,5 +65,10 @@ export const shopApiExtensions = gql`
   type PaginatedBannerList {
     items: [Banner!]!
     totalItems: Int!
+  }
+
+  extend type Query {
+    banners(options: BannerListOptions): PaginatedBannerList!
+    banner(bannerId: ID!): Banner
   }
 `;

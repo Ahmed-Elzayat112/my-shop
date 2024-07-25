@@ -3,17 +3,14 @@ import { BannerTranslationInput } from "./banner-translation.input";
 
 @InputType()
 export class BannerDataInput {
-  @Field({ nullable: true })
+  @Field()
   position: number;
 
-  @Field({ nullable: true })
+  @Field()
   page: number;
 
   @Field({ nullable: true })
-  assetId: number;
-
-  @Field({ nullable: true })
-  featuredAssetId?: number;
+  url?: string;
 
   @Field(() => [BannerTranslationInput])
   translations: BannerTranslationInput[];

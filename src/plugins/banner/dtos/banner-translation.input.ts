@@ -9,9 +9,6 @@ export class BannerTranslationInput {
   @Field()
   assetId: number;
 
-  @Field({ nullable: true })
-  url?: string;
-
   @Field()
-  name: string;
+  title: string;
 }

@@ -1,5 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import {
+  assertFound,
   AssetService,
   ChannelService,
   EntityWithAssets,
@@ -36,15 +37,14 @@ export class BannerService {
       throw new Error("Maximum number of banners reached");
     }
 
-    const banners = await this.connection.getRepository(ctx, Banner).find({
-      where: { page: bannerData.page },
-    });
-    const existingBanner = banners.find(
-      (b) => b.position == bannerData.position
-    );
+    const existingBanner = await this.connection
+      .getRepository(ctx, Banner)
+      .findOne({
+        where: { page: bannerData.page, position: bannerData.position },
+      });
 
     if (existingBanner) {
-      throw new HttpException("Position already taken", HttpStatus.AMBIGUOUS);
+      throw new Error("Position already taken");
     }
   }
 
@@ -67,37 +67,26 @@ export class BannerService {
       translationType: BannerTranslation,
       beforeSave: async (f) => {
         await this.channelService.assignToCurrentChannel(f, ctx);
-        // await this.assetService.updateEntityAssets(ctx, f, bannerData); error.entity-must-have-an-id
       },
     });
-
-    // const bannerAsserts = await this.assetService.getEntityAssets(
-    //   ctx,
-    //   savedBanner
-    // );
-    // console.log("------------->", bannerAsserts);
-
-    console.log(savedBanner);
-
-    // look at vendur way to save asset
-    return this.translatorService.translate(
-      await this.getBanner(ctx, +savedBanner.id!),
-      // savedBanner,
-      ctx
+    const bannerWithAsset = await assertFound(
+      this.getBanner(ctx, +savedBanner.id)
     );
+    return this.translatorService.translate(bannerWithAsset, ctx, [
+      "translations.image",
+    ]);
   }
 
   async updateBanner(
     ctx: RequestContext,
-    bannerId: number,
     updateBannerData: UpdateBannerInput
   ): Promise<Banner> {
     // validation
-    this.validateInput(ctx, updateBannerData);
+    await this.validateInput(ctx, updateBannerData);
 
     const banner = await this.connection
       .getRepository(ctx, Banner)
-      .findOne({ where: { id: bannerId } });
+      .findOne({ where: { id: updateBannerData.id } });
 
     if (!banner) {
       throw new Error("Banner not found");
@@ -112,10 +101,11 @@ export class BannerService {
       translationType: BannerTranslation,
       beforeSave: async (f) => {},
     });
-    return this.translatorService.translate(
-      await this.getBanner(ctx, +savedBanner.id!),
-      ctx
+
+    const bannerWithAsset = await assertFound(
+      this.getBanner(ctx, +savedBanner.id)
     );
+    return this.translatorService.translate(bannerWithAsset, ctx);
   }
 
   async getBanner(ctx: RequestContext, bannerId: number): Promise<Banner> {

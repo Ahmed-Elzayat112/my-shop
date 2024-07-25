@@ -24,8 +24,6 @@ export class BannerTranslation
     super(input);
   }
 
-  @Column() name: string;
-
   @ManyToOne((type) => Banner, (base) => base.translations, {
     onDelete: "CASCADE",
   })
@@ -34,14 +32,13 @@ export class BannerTranslation
   @Column("varchar")
   languageCode: LanguageCode;
 
+  @Column({ nullable: true }) title?: string;
+
   @Column({ nullable: true })
   assetId: ID;
 
   @Index()
   @ManyToOne((type) => Asset, { eager: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "assetId" })
-  asset: Asset;
-
-  @Column({ nullable: true })
-  url?: string;
+  image: Asset;
 }

@@ -21,32 +21,25 @@ import {
 import { BannerTranslation } from "./banner-translation.entity";
 import { OrderableAsset } from "@vendure/core/dist/entity/asset/orderable-asset.entity";
 
-// ChannelAware, EntityWithAssets
+// ChannelAware
 @Entity()
 export class Banner
   extends VendureEntity
-  implements Translatable, ChannelAware, EntityWithAssets
+  implements Translatable, ChannelAware
 {
   constructor(input?: DeepPartial<Banner>) {
     super(input);
   }
-
-  name: LocaleString;
-  url?: LocaleString;
-
-  // @ManyToMany((type) => Asset)
-  // @JoinTable()
-  assets: OrderableAsset[];
-
-  @ManyToOne((type) => Asset, { nullable: true })
-  @JoinColumn()
-  featuredAsset: Asset;
 
   @Column()
   position: number;
 
   @Column()
   page: number;
+
+  title?: LocaleString;
+  url?: LocaleString;
+  image: Asset;
 
   @OneToMany((type) => BannerTranslation, (translation) => translation.base, {
     eager: true,

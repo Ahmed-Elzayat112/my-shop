@@ -4,10 +4,10 @@ export const adminApiExtensions = gql`
   type Banner {
     id: ID!
     position: Int!
-    url: String
-    asset: Asset
-    name: String!
     page: Int!
+    url: String
+    title: String
+    image: Asset!
     translations: [BannerTranslation!]!
   }
 
@@ -15,21 +15,30 @@ export const adminApiExtensions = gql`
     id: ID!
     languageCode: LanguageCode!
     assetId: Int!
-    url: String
-    name: String!
+    title: String!
+    base: Banner!
+    image: Asset!
   }
 
   input BannerDataInput {
     position: Int!
     page: Int!
+    url: String
     translations: [BannerTranslationInput!]!
   }
 
   input BannerTranslationInput {
     languageCode: LanguageCode!
     assetId: Int!
+    title: String!
+  }
+
+  input UpdateBannerInput {
+    id: ID!
+    position: Int!
+    page: Int!
     url: String
-    name: String!
+    translations: [BannerTranslationInput!]!
   }
 
   extend type Query {
@@ -73,6 +82,6 @@ export const adminApiExtensions = gql`
 
   extend type Mutation {
     createBanner(bannerData: BannerDataInput!): Banner!
-    updateBanner(bannerId: ID!, bannerData: BannerDataInput!): Banner!
+    updateBanner(updateBannerData: UpdateBannerInput!): Banner!
   }
 `;
