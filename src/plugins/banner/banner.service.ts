@@ -1,5 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import {
+  AssetService,
+  ChannelService,
+  EntityWithAssets,
   RequestContext,
   TransactionalConnection,
   TranslatableSaver,
@@ -15,7 +18,9 @@ export class BannerService {
   constructor(
     private connection: TransactionalConnection,
     private translatorService: TranslatorService,
-    private translatableSaver: TranslatableSaver
+    private translatableSaver: TranslatableSaver,
+    private channelService: ChannelService,
+    private assetService: AssetService
   ) {}
 
   private async validateInput(
@@ -49,17 +54,31 @@ export class BannerService {
     const banner = new Banner();
     banner.position = bannerData.position;
 
+    console.log("----------> banner", banner);
+
     const savedBanner = await this.translatableSaver.create({
       ctx,
       input: bannerData,
       entityType: Banner,
       translationType: BannerTranslation,
-      beforeSave: async (f) => {},
+      beforeSave: async (f) => {
+        await this.channelService.assignToCurrentChannel(f, ctx);
+        // await this.assetService.updateEntityAssets(ctx, f, bannerData); error.entity-must-have-an-id
+      },
     });
+
+    // const bannerAsserts = await this.assetService.getEntityAssets(
+    //   ctx,
+    //   savedBanner
+    // );
+    // console.log("------------->", bannerAsserts);
+
+    console.log(savedBanner);
 
     // look at vendur way to save asset
     return this.translatorService.translate(
-      await this.getBanner(ctx, +savedBanner.id!),
+      // await this.getBanner(ctx, +savedBanner.id!),
+      savedBanner,
       ctx
     );
   }

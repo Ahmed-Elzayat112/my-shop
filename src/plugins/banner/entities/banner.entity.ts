@@ -1,26 +1,46 @@
-import { Entity, Column, OneToMany, DeepPartial, ManyToOne } from "typeorm";
+import {
+  Entity,
+  Column,
+  OneToMany,
+  DeepPartial,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
+  JoinColumn,
+} from "typeorm";
 import {
   VendureEntity,
   Translatable,
   Translation,
   LocaleString,
   Asset,
+  ChannelAware,
+  Channel,
+  EntityWithAssets,
 } from "@vendure/core";
 import { BannerTranslation } from "./banner-translation.entity";
+import { OrderableAsset } from "@vendure/core/dist/entity/asset/orderable-asset.entity";
 
+// ChannelAware, EntityWithAssets
 @Entity()
-export class Banner extends VendureEntity implements Translatable {
+export class Banner
+  extends VendureEntity
+  implements Translatable, ChannelAware, EntityWithAssets
+{
   constructor(input?: DeepPartial<Banner>) {
     super(input);
   }
 
   name: LocaleString;
   url?: LocaleString;
-  asset?: Asset;
 
-  // @ManyToOne((type) => Asset, {
-  //   nullable: true,
-  // })
+  // @ManyToMany((type) => Asset)
+  // @JoinTable()
+  assets: OrderableAsset[];
+
+  @ManyToOne((type) => Asset, { nullable: true })
+  @JoinColumn()
+  featuredAsset: Asset;
 
   @Column()
   position: number;
@@ -32,4 +52,8 @@ export class Banner extends VendureEntity implements Translatable {
     eager: true,
   })
   translations: Array<Translation<Banner>>;
+
+  @ManyToMany((type) => Channel)
+  @JoinTable()
+  channels: Channel[];
 }

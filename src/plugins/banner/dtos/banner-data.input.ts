@@ -12,6 +12,9 @@ export class BannerDataInput {
   @Field({ nullable: true })
   assetId: number;
 
+  @Field({ nullable: true })
+  featuredAssetId?: number;
+
   @Field(() => [BannerTranslationInput])
   translations: BannerTranslationInput[];
 }
