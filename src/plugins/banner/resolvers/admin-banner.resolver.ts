@@ -10,27 +10,33 @@ import {
   Permission,
   RequestContext,
 } from "@vendure/core";
-import { createBanner, updateBanner } from "../banner.permission";
+import {
+  createBanner,
+  deleteBanner,
+  readBanner,
+  updateBanner,
+} from "../banner.permission";
 import { UpdateBannerInput } from "../dtos/update-banner.input";
-import { BannerListOptions } from "../dtos/banner-options.input";
 
 @Resolver()
 export class AdminBannerResolver {
   constructor(private bannerService: BannerService) {}
 
   @Query()
-  @Allow(Permission.ReadCatalog)
+  @Allow(readBanner.Permission)
   async banners(
     @Ctx() ctx: RequestContext,
-    @Args("options", { type: () => BannerListOptions, nullable: true })
-    options?: ListQueryOptions<Banner>
+    @Args() args: any
   ): Promise<PaginatedList<Banner>> {
-    const banners = await this.bannerService.getBanners(ctx);
+    const banners = await this.bannerService.getBanners(
+      ctx,
+      args.options || undefined
+    );
     return banners;
   }
 
   @Query()
-  @Allow(Permission.ReadCatalog)
+  @Allow(readBanner.Permission)
   async banner(
     @Args() { bannerId }: { bannerId: number },
     @Ctx() ctx: RequestContext
@@ -54,5 +60,15 @@ export class AdminBannerResolver {
     @Ctx() ctx: RequestContext
   ): Promise<Banner> {
     return this.bannerService.updateBanner(ctx, updateBannerData);
+  }
+
+  @Mutation()
+  @Allow(deleteBanner.Permission)
+  async deleteBanner(
+    @Args() { bannerId }: { bannerId: number },
+    @Ctx() ctx: RequestContext
+  ): Promise<Banner> {
+    const deletedBanner = await this.bannerService.deleteBanner(ctx, bannerId);
+    return deletedBanner;
   }
 }

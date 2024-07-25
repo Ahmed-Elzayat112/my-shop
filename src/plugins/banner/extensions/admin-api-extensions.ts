@@ -1,8 +1,10 @@
 import gql from "graphql-tag";
 
 export const adminApiExtensions = gql`
-  type Banner {
+  type Banner implements Node {
     id: ID!
+    createdAt: DateTime!
+    updatedAt: DateTime!
     position: Int!
     page: Int!
     url: String
@@ -41,47 +43,21 @@ export const adminApiExtensions = gql`
     translations: [BannerTranslationInput!]!
   }
 
-  extend type Query {
-    banners(options: BannerListOptions): PaginatedBannerList!
-    banner(bannerId: ID!): Banner
-  }
-
-  input BannerListOptions {
-    skip: Int
-    take: Int
-    sort: BannerSortParameter
-    filter: BannerFilterParameter
-    filterOperator: LogicalOperator
-  }
-
-  input BannerSortParameter {
-    position: SortOrder
-    page: SortOrder
-  }
-
-  input BannerPositionFilterParameter {
-    eq: Int
-    notEq: Int
-    lt: Int
-    lte: Int
-    gt: Int
-    gte: Int
-    in: [Int]
-    notIn: [Int]
-  }
-
-  input BannerFilterParameter {
-    position: BannerPositionFilterParameter
-    page: BannerPositionFilterParameter
-  }
-
-  type PaginatedBannerList {
+  type BannerList implements PaginatedList {
     items: [Banner!]!
     totalItems: Int!
+  }
+
+  input BannerListOptions
+
+  extend type Query {
+    banners(options: BannerListOptions): BannerList!
+    banner(bannerId: ID!): Banner
   }
 
   extend type Mutation {
     createBanner(bannerData: BannerDataInput!): Banner!
     updateBanner(updateBannerData: UpdateBannerInput!): Banner!
+    deleteBanner(bannerId: ID!): Banner!
   }
 `;

@@ -3,10 +3,8 @@ import {
   Column,
   OneToMany,
   DeepPartial,
-  ManyToOne,
   ManyToMany,
   JoinTable,
-  JoinColumn,
 } from "typeorm";
 import {
   VendureEntity,
@@ -16,7 +14,6 @@ import {
   Asset,
   ChannelAware,
   Channel,
-  EntityWithAssets,
 } from "@vendure/core";
 import { BannerTranslation } from "./banner-translation.entity";
 import { OrderableAsset } from "@vendure/core/dist/entity/asset/orderable-asset.entity";

@@ -9,20 +9,21 @@ import {
   Permission,
   RequestContext,
 } from "@vendure/core";
-import { BannerListOptions } from "../dtos/banner-options.input";
 
 @Resolver()
 export class ShopBannerResolver {
   constructor(private bannerService: BannerService) {}
 
   @Query()
-  @Allow(Permission.ReadCatalog)
+  @Allow(Permission.Public)
   async banners(
     @Ctx() ctx: RequestContext,
-    @Args("options", { type: () => BannerListOptions, nullable: true })
-    options?: ListQueryOptions<Banner>
+    @Args() args: any
   ): Promise<PaginatedList<Banner>> {
-    const banners = await this.bannerService.getBanners(ctx);
+    const banners = await this.bannerService.getBanners(
+      ctx,
+      args.options || undefined
+    );
     return banners;
   }
 

@@ -7,7 +7,12 @@ import { Banner } from "./entities/banner.entity";
 import { AdminBannerResolver } from "./resolvers/admin-banner.resolver";
 import { ShopBannerResolver } from "./resolvers/shop-banner.resolver";
 import { adminApiExtensions } from "./extensions/admin-api-extensions";
-import { createBanner, updateBanner } from "./banner.permission";
+import {
+  createBanner,
+  deleteBanner,
+  readBanner,
+  updateBanner,
+} from "./banner.permission";
 import { shopApiExtensions } from "./extensions/shop-api-extensions";
 import { BannerTranslation } from "./entities/banner-translation.entity";
 
@@ -29,6 +34,8 @@ import { BannerTranslation } from "./entities/banner-translation.entity";
   configuration: (config) => {
     config.authOptions.customPermissions.push(createBanner);
     config.authOptions.customPermissions.push(updateBanner);
+    config.authOptions.customPermissions.push(deleteBanner);
+    config.authOptions.customPermissions.push(readBanner);
     return config;
   },
   compatibility: "^3.0.0",

@@ -16,7 +16,6 @@ import { Banner } from "./entities/banner.entity";
 import { BannerDataInput } from "./dtos/banner-data.input";
 import { BannerTranslation } from "./entities/banner-translation.entity";
 import { UpdateBannerInput } from "./dtos/update-banner.input";
-import { BannerListOptions } from "./dtos/banner-options.input";
 
 @Injectable()
 export class BannerService {
@@ -57,8 +56,6 @@ export class BannerService {
 
     const banner = new Banner();
     banner.position = bannerData.position;
-
-    console.log("----------> banner", banner);
 
     const savedBanner = await this.translatableSaver.create({
       ctx,
@@ -136,5 +133,19 @@ export class BannerService {
           totalItems,
         };
       });
+  }
+
+  async deleteBanner(ctx: RequestContext, bannerId: number): Promise<Banner> {
+    const banner = await this.connection
+      .getRepository(ctx, Banner)
+      .findOne({ where: { id: bannerId } });
+
+    if (!banner) {
+      throw new Error("Banner not found");
+    }
+
+    await this.connection.getRepository(ctx, Banner).remove(banner);
+
+    return this.translatorService.translate(banner, ctx);
   }
 }
